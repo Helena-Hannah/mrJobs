@@ -1,0 +1,44 @@
+@font-face {
+    font-family: 'swissracondensed-uploadedfile';
+    src: url('../fonts/Arabic/swissra_condensed_normal.woff2') format('woff2'),
+         url('../fonts/Arabic/swissra_condensed_normal.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'swissracondensed-uploadedfile';
+    src: url('../fonts/Arabic/swissra_condensed_medium.woff2') format('woff2'),
+         url('../fonts/Arabic/swissra_condensed_medium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'swiss_light';
+    src: url('../fonts/Arabic/swissra_condensed_light.woff2') format('woff2'),
+         url('../fonts/Arabic/swissra_condensed_light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'swiss_bold';
+    src: url('../fonts/Arabic/swissra_condensed_bold.woff2') format('woff2'),
+         url('../fonts/Arabic/swissra_condensed_bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
