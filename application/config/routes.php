@@ -58,7 +58,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['user/signUp'] = 'UserController/signUp';                                      // user signUp
 $route['user/signIn'] = 'UserController/signIn';                                      // user signUp
-$route['user/editProfile'] = 'UserController/editProfile';                            // user Edit profile
+$route['user/editProfile/(:num)'] = 'UserController/editProfile/$1';                            // user Edit profile
 $route['user/forgotPassword'] = 'UserController/forgotPassword';                      // forgot password page
 $route['resetUserPassword'] = 'UserController/resetUserPassword';                     // reset forgot password
 $route['user/signOut'] = 'UserController/signOut';                                    // user signOut
@@ -69,20 +69,13 @@ $route['user/changeMySettings'] = 'UserController/changeMySettings';            
 
 //Category Modules
 $route['home/AllCategories'] = 'JobCategoryController/jobCategories';                    // category list for sign up
+$route['home/getJobsByCategory'] = 'JobCategoryController/getJobsByCategory';
 
 
 //Web view pages
-$route['documents/termsConditions'] = 'DocumentController/termsConditions';             // create delivery
-$route['documents/termsConditions_en'] = 'ApplicationController/termsConditionsEn';        // create delivery
-$route['documents/termsConditions_ar'] = 'ApplicationController/termsConditionsAr';        // create delivery
-$route['documents/disclaimer_en'] = 'ApplicationController/disclaimerEn';                   // create delivery
-$route['documents/disclaimer_ar'] = 'ApplicationController/disclaimerAr';                    // create delivery
-$route['documents/delivery_en'] = 'ApplicationController/deliveryEn';                    // create delivery
-$route['documents/delivery_ar'] = 'ApplicationController/deliveryAr';                    // create delivery
-$route['documents/privacy_en'] = 'ApplicationController/privacyEn';                    // create delivery
-$route['documents/privacy_ar'] = 'ApplicationController/privacyAr';                    // create delivery
-$route['documents/refund_en'] = 'ApplicationController/refundEn';                    // create delivery
-$route['documents/refund_ar'] = 'ApplicationController/refundAr';                    // create delivery
+$route['appSettings/pageURLs'] = 'DocumentController/termsConditions';             // create delivery
+$route['documents/about_us'] = 'ApplicationController/about_us';        // create delivery
+$route['documents/contact_us'] = 'ApplicationController/contact_us';        // create delivery
 
 
 //Push Notifications

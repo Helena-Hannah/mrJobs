@@ -8,150 +8,6 @@
  */
 class UserModel extends CI_Model
 {
-    /*public $id;
-    public $u_email;checkUserSession
-    public $location_id;
-    public $category_id;
-    public $u_mobile;
-    public $u_password;
-    public $u_profilePicURL;
-    public $u_dob;
-    public $u_Name;
-    public $u_address1;
-    public $u_address2;
-    public $created_date;
-    public $last_updated;
-
-    public function setUserId($userId)
-    {
-        $this->id = $userId;
-    }
-
-    public function getUserId()
-    {
-        $this->id;
-    }
-
-    public function setUserEmail($userEmail)
-    {
-        $this->u_email = $userEmail;
-    }
-
-    public function getUserEmail()
-    {
-        $this->u_email;
-    }
-
-    public function setUserMobile($userMobile)
-    {
-        $this->u_mobile = $userMobile;
-    }
-
-    public function getUserMobile()
-    {
-        $this->u_mobile;
-    }
-
-    public function setUserPassword($userPassword)
-    {
-        $this->u_password = $userPassword;
-    }
-
-    public function getUserPassword()
-    {
-        $this->u_password;
-    }
-
-    public function setUserProfilePic($userPassword)
-    {
-        $this->u_profilePicURL = $userPassword;
-    }
-
-    public function getUserProfilePic()
-    {
-        $this->u_profilePicURL;
-    }
-
-    public function setUserDob($userDob)
-    {
-        $this->u_dob = $userDob;
-    }
-
-    public function getUserDob()
-    {
-        $this->u_dob;
-    }
-
-    public function setUserName($userName)
-    {
-        $this->u_Name = $userName;
-    }
-
-    public function getUserName()
-    {
-        $this->u_Name;
-    }
-
-    public function setUserAddress1($UserAddress1)
-    {
-        $this->u_address1 = $UserAddress1;
-    }
-
-    public function getUserAddress1()
-    {
-        $this->u_address1;
-    }
-
-    public function setUserAddress2($UserAddress2)
-    {
-        $this->u_address2 = $UserAddress2;
-    }
-
-    public function getUserAddress2()
-    {
-        $this->u_address2;
-    }
-
-    public function setUserCategory($CategoryID)
-    {
-        $this->category_id = $CategoryID;
-    }
-
-    public function getUserCategory()
-    {
-        $this->category_id;
-    }
-
-    public function setUserLocation($LocationID)
-    {
-        $this->location_id = $LocationID;
-    }
-
-    public function getUserLocation()
-    {
-        $this->location_id;
-    }
-
-    public function setUserCreatedDate($userCreatedDate)
-    {
-        $this->created_date = $userCreatedDate;
-    }
-
-    public function getUserCreatedDate()
-    {
-        $this->created_date;
-    }
-
-    public function setUserUpdatedDate($userUpdatedDate)
-    {
-        $this->last_updated = $userUpdatedDate;
-    }
-
-    public function getUserUpdatedDate()
-    {
-        $this->last_updated;
-    }*/
-
 // SignUp User Profile
 
     public function signUp($userDetails)
@@ -170,7 +26,6 @@ class UserModel extends CI_Model
 
     public function getAccessToken($userDetails)
     {
-        // print_r($userDetails); die;
         $session_token = hash("md5", $userDetails['u_email'] . "-" . $userDetails['u_mobile'] . "-" . time(), false);
 
         try {
@@ -190,7 +45,6 @@ class UserModel extends CI_Model
             }
             $data['u_platform'] = $userDetails['u_platform'];
             $data['device_token'] = $userDetails['device_token'];
-            $data['language_id'] = $userDetails['language_id'];
             $data['user_id'] = $userDetails['user_id'];
             $data['last_updated_date'] = date("Y-m-d H:i:s");
             if (empty($tokenCheckStatusRes)) {
@@ -226,13 +80,12 @@ class UserModel extends CI_Model
     {
         $this->db->select(array('user_profile.id as user_id', 'user_profile.u_email',
             'user_profile.u_Name', 'user_profile.u_mobile',
-            "IFNULL(user_profile.u_dob,'')as u_dob", "IFNULL(user_profile.u_address1,'')as u_address1",
-            "user_profile.u_address2",
+            "IFNULL(user_profile.u_dob,'')as u_dob", "IFNULL(user_profile.u_address,'')as u_address",
             "case when (user_profile.u_profilePicURL IS NULL) THEN '" . base_url() . defaultImage . "'
 	             when (user_profile.u_profilePicURL!='') THEN CONCAT('" . base_url() . "project_img/user_profile/',u_profilePicURL)
                  END as u_profilePicURL", 'user_profile.created_date', 'user_profile.last_updated',
             'user_settings.u_platform', 'user_settings.device_token',
-            'user_settings.language_id', 'languages.language',
+
             'IFNULL(user_settings.notification_settings,"")as notification_settings'));
         $this->db->from("user_profile");
         if (!empty($email)) {
@@ -243,7 +96,6 @@ class UserModel extends CI_Model
             $this->db->where(array('user_profile.u_mobile' => $phone));
         }
         $this->db->join('user_settings', 'user_settings.user_id = user_profile.id');
-        $this->db->join('languages', 'languages.id = user_settings.language_id', 'left');
         $res = $this->db->get()->result_array();
         if (count($res)) {
             return $res[0];
@@ -254,9 +106,9 @@ class UserModel extends CI_Model
 
 
     //get user status
-    public function getUserEmailStatus($email, $userId,$phone)
+    public function getUserEmailStatus($email, $userId, $phone)
     {
-        $this->db->select(array('id','u_email'));
+        $this->db->select(array('id', 'u_email'));
         $this->db->from("user_profile");
         if (!empty($email)) {
             $this->db->where(array('u_email' => $email));
@@ -272,6 +124,7 @@ class UserModel extends CI_Model
             return false;
         }
     }
+
     // User Login
 
     public function loginCheck($userDetails)
@@ -290,17 +143,13 @@ class UserModel extends CI_Model
                     if ($res) {
                         return $res[0]['id'];
                     } else {
-                        if($userDetails['language_id']=='1')
+
                         return array("Sorry, your password was incorrect. Please double-check your password.");
-                   else
-                       return array("عذرًا، كلمة السر الحالية خاطئة. يرجى التحقق من كلمة السر مرة أخرى");
                     }
                 }
             } else {
-                if($userDetails['language_id']=='1')
+
                 return array("The mail id you entered doesn't belong to an account. Please check your mail id and try again.");
-           else
-               return array("البريد الالكتروني الذي أدخلته لا ينتمي إلى حساب  يرجى التحقق من البريد الالكتروني الخاص بك وحاول مرة أخرى.");
             }
         } catch (Exception $exc) {
             throw new Exception($exc->getMessage());
@@ -334,42 +183,6 @@ class UserModel extends CI_Model
             return $res[0];
         } else {
             return false;
-        }
-    }
-
-    public function getLanguageInfo($language_id)
-    {
-        try {
-            $this->db->select("");
-            $this->db->from("languages");
-            $this->db->where(array("id" => $language_id));
-            $res = $this->db->get()->result_array();
-            if ($res) {
-                return $res;
-            } else {
-                return false;
-            }
-        } catch (Exception $exc) {
-            throw new Exception($exc->getMessage());
-        }
-    }
-
-    public function myDeliveryDetails($user_id)
-    {
-        try {
-            $this->db->select(array("locations.location_id", "locations.location_name", "locations.delivery_charge", "locations.delivery_time"
-            ,"latitude","longitude"));
-            $this->db->from("locations");
-            $this->db->join("user_profile", "locations.location_id = user_profile.location_id");
-            $this->db->where(array("user_profile.id" => $user_id, "locations.status" => 'Y'));
-            $res = $this->db->get()->result_array();
-            if ($res) {
-                return $res[0];
-            } else {
-                return "";
-            }
-        } catch (Exception $exc) {
-            throw new Exception($exc->getMessage());
         }
     }
 
@@ -415,37 +228,6 @@ class UserModel extends CI_Model
             throw new Exception($exc->getMessage());
         }
     }
-
-    //get refreshtoken of a user id
-    /*public function getRefreshTokenWithUserID($user_id,$refreshToken){
-
-        $this->db->select('refresh_token');
-        $this->db->from('user_settings');
-        $this->db->where(array('user_id'=> $user_id,'refresh_token LIKE' => $refreshToken));
-        $res = $this->db->get()->result_array();
-        if (!empty($res)) {
-            return $res[0];
-        } else {
-            return false;
-        }
-    }*/
-
-    // Get Refresh Token
-
-    /* public function getRefreshToken($refreshToken)
-     {
-         $this->db->select();
-         $this->db->from('user_settings');
-         $this->db->where(array('refresh_token LIKE' => $refreshToken));
-         $query = $this->db->get();
-         $res = $query->result();
-         if (!empty($res)) {
-             $userDetails = json_decode(json_encode($res[0]), true);
-             return $userDetails;
-         } else {
-             return false;
-         }
-     }*/
 
     // Set forgot password
 
@@ -498,57 +280,14 @@ class UserModel extends CI_Model
         }
     }
 
-    public function getMyCategoryDetails($userId)
-    {
-        try {
-            /*$this->db->select(array("categories.category_id","categories.catname_english",
-                "categories.category_pic","categories.created_date"));
-            $this->db->from("user_profile");
-            $this->db->join("categories","user_profile.category_id=categories.category_id");
-            $this->db->where(array("user_profile.id" => $userId),
-                "categories.status","Y");*/
-            $this->db->select("category_id");
-            $this->db->from("user_profile");
-            $this->db->where(array("id" => $userId));
-            $res = $this->db->get()->result_array();
-            if ($res) {
-                return $res[0];
-            } else {
-                return false;
-            }
-        } catch (Exception $exc) {
-            throw new Exception($exc->getMessage());
-        }
-    }
-
-    public function getMyLocationyDetails($userId)
-    {
-        try {
-            $this->db->select(array("locations.location_id", "locations.location_name",
-                "locations.delivery_charge", "locations.delivery_time"));
-            $this->db->from("user_profile");
-            $this->db->join("locations", "user_profile.location_id=locations.location_id");
-            $this->db->where(array("user_profile.id" => $userId),
-                "locations.status", "Y");
-            $res = $this->db->get()->result_array();
-            if ($res) {
-                return $res[0];
-            } else {
-                return false;
-            }
-        } catch (Exception $exc) {
-            throw new Exception($exc->getMessage());
-        }
-    }
-
     //Get all active notification users list
 
     public function getAllActiveNotificUsers()
     {
-        $this->db->select(array('user_profile.u_email', 'user_profile.id as user_id','user_profile.u_Name'));
+        $this->db->select(array('user_profile.u_email', 'user_profile.id as user_id', 'user_profile.u_Name'));
         $this->db->from('user_profile');
         $this->db->join('user_settings', 'user_settings.user_id = user_profile.id');
-        $this->db->where(array('user_settings.notification_settings'=>'Y'));
+        $this->db->where(array('user_settings.notification_settings' => 'Y'));
         $res = $this->db->get()->result_array();
         if (!empty($res)) {
             return $res;
@@ -557,43 +296,12 @@ class UserModel extends CI_Model
         }
     }
 
-    public function  getAllSelectedUsers($userID){
-        $this->db->select(array('user_profile.u_email', 'user_profile.id as user_id','user_profile.u_Name'));
-        $this->db->from('user_profile');
-        $this->db->join('user_settings', 'user_settings.user_id = user_profile.id');
-        $this->db->where(array('user_settings.notification_settings'=>'Y','user_profile.id'=>$userID));
-        $res = $this->db->get()->result_array();
-        if (!empty($res)) {
-            return $res;
-        } else {
-            return false;
-        }
-    }
-
-    public function addStockNotification($data){
-
-
-        try {
-            $res = $this->db->insert('stock_notifications', $data);
-            if ($res) {
-                return $this->db->insert_id();
-            } else {
-                return false;
-            }
-        } catch (Exception $exc) {
-            throw new Exception("Database error occured");
-        }
-    }
-
-    //Get all active notification users list
-
-    public function getAllActiveStockUsers($product_id)
+    public function getAllSelectedUsers($userID)
     {
-        $this->db->select(array('user_profile.u_email', 'user_profile.id as user_id','user_profile.u_Name'));
+        $this->db->select(array('user_profile.u_email', 'user_profile.id as user_id', 'user_profile.u_Name'));
         $this->db->from('user_profile');
-        $this->db->join('stock_notifications', 'stock_notifications.user_id = user_profile.id');
-        $this->db->where(array('stock_notifications.status'=>'Y',
-            "stock_notifications.product_id"=>$product_id));
+        $this->db->join('user_settings', 'user_settings.user_id = user_profile.id');
+        $this->db->where(array('user_settings.notification_settings' => 'Y', 'user_profile.id' => $userID));
         $res = $this->db->get()->result_array();
         if (!empty($res)) {
             return $res;
@@ -602,20 +310,64 @@ class UserModel extends CI_Model
         }
     }
 
-    public function checkStockNotifaication($userId,$productId){
-        try {
-            $this->db->select("id");
-            $this->db->from("stock_notifications");
-            $this->db->where(array("user_id" => $userId,
-                "product_id"=>$productId));
-            $res = $this->db->get()->result_array();
-            if ($res) {
-                return $res[0];
-            } else {
-                return "";
-            }
-        } catch (Exception $exc) {
-            throw new Exception($exc->getMessage());
+    public function getUserJobData($userID)
+    {
+        $this->db->select(array('job_data_maping.id as job_id', 'jobs.position_name'));
+        $this->db->from('jobs');
+        $this->db->join('job_data_maping', 'jobs.id = job_data_maping.job_id');
+        $this->db->where(array('job_data_maping.user_id' => $userID));
+        $res = $this->db->get()->result_array();
+        if (!empty($res)) {
+            return $res;
+        } else {
+            return false;
         }
+    }
+
+    public function getUserExperienceData($get_userID)
+    {
+        $this->db->select(array('id', 'current_experience', 'years', 'reference_number'));
+        $this->db->from('user_experience');
+        $this->db->where(array('user_id' => $get_userID));
+        $res = $this->db->get()->result_array();
+        if (!empty($res)) {
+            return $res;
+        } else {
+            return false;
+        }
+    }
+
+    public function getUserQualificationData($get_userID)
+    {
+        $this->db->select(array('id', 'qualification_name', 'passout_year '));
+        $this->db->from('user_qualifications');
+        $this->db->where(array('user_id' => $get_userID));
+        $res = $this->db->get()->result_array();
+        if (!empty($res)) {
+            return $res;
+        } else {
+            return false;
+        }
+    }
+
+    public function DeleteUserQualifications($userid)
+    {
+        $this->db->where('user_id', $userid);
+        $del = $this->db->delete('user_qualifications');
+        return $del;
+    }
+
+    public function DeleteUserExperiences($userid)
+    {
+        $this->db->where('user_id', $userid);
+        $del = $this->db->delete('user_experience');
+        return $del;
+    }
+
+    public function DeleteUserJobs($userid)
+    {
+        $this->db->where('user_id', $userid);
+        $del = $this->db->delete('job_data_maping');
+        return $del;
     }
 }
